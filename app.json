@@ -1,0 +1,12 @@
+{
+  "name": "expo-cast-canvas-sender",
+  "displayName": "expo-cast-canvas-sender",
+  "expo": {
+    "name": "expo-cast-canvas-sender",
+    "slug": "expo-cast-canvas-sender",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
