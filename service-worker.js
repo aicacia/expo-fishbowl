@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/expo-fishbowl/precache-manifest.2e5e7434196284947cd0f3ce4bb34051.js"
+  "/expo-fishbowl/precache-manifest.e924cf781ac23d68617b390648c7d731.js"
 );
 
 workbox.skipWaiting();
