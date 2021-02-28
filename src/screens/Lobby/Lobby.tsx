@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Button, CheckBox, Divider, Input, Text } from "@ui-kitten/components";
 import { GAME_SCREEN, ParamList } from "../../navigationConfig";
 import { usePeer } from "../../peer";
@@ -11,20 +11,9 @@ import {
   Peer,
   selectPeers,
   selectTeams,
-  setPeerTeam,
 } from "../../state/game";
 import { getAppId, getIdFromAppId } from "../../id";
 import { useNavigation } from "@react-navigation/native";
-
-const styles = StyleSheet.create({
-  castButton: {
-    position: "absolute",
-    right: 8,
-    top: 8,
-    width: 32,
-    height: 32,
-  },
-});
 
 export function Lobby(props: ParamList[typeof GAME_SCREEN]) {
   const peer = usePeer(),

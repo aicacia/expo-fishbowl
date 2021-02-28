@@ -1,7 +1,7 @@
 # expo-fishbowl
 
 [![license](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue")](LICENSE-MIT)
-[![site](https://img.shields.io/badge/www-fishbowl-blue.svg)](https://aicacia.gitlab.io/expo-fishbowl/)
+[![site](https://img.shields.io/badge/www-fishbowl-blue.svg)](https://aicacia.github.io/expo-fishbowl/)
 [![build](https://github.com/aicacia/expo-fishbowl/workflows/Test/badge.svg)](https://github.com/aicacia/expo-fishbowl/actions?query=workflow%3ABuild)
 
 ## Tech

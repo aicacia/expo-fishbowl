@@ -6,7 +6,7 @@ export const HOME_SCREEN = "Home",
   DEFAULT_SCREEN = HOME_SCREEN;
 
 export type ParamList = {
-  [HOME_SCREEN]: {};
+  [HOME_SCREEN]: unknown;
   [LOBBY_SCREEN]: {
     id: string;
   };

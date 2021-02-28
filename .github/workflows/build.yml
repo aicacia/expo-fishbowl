@@ -19,7 +19,7 @@ jobs:
 
       - run: npm i
       - run: npm install json -g
-      - run: json -I -f package.json -e 'this.homepage="https://aicacia.gitlab.io/expo-fishbowl/"'
+      - run: json -I -f package.json -e 'this.homepage="https://aicacia.github.io/expo-fishbowl/"'
       - run: json -I -f web/manifest.json -e 'this.start_url="/expo-fishbowl/?utm_source=web_app_manifest"'
       - run: npm run build.web
       - run: cp web/404.html web-build
