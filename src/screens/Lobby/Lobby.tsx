@@ -1,30 +1,52 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { makeUrl } from "expo-linking";
 import { Button, CheckBox, Divider, Input, Text } from "@ui-kitten/components";
 import { GAME_SCREEN, ParamList } from "../../navigationConfig";
 import { usePeer } from "../../peer";
 import { useMapStateToProps } from "../../state";
 import {
-  gameSetPeerName,
-  gameSetPeerTeam,
-  gameSetTeamName,
+  setPeerName,
+  setPeerTeam,
+  setTeamName,
+  start,
   Peer,
   selectPeers,
   selectTeams,
+  selectState,
+  GameState,
+  lobby,
 } from "../../state/game";
-import { getAppId, getIdFromAppId } from "../../id";
+import { getAppId } from "../../id";
 import { useNavigation } from "@react-navigation/native";
+import { QRCode } from "../../QRCode";
+import { isLargeScreen, SMALL_WIDTH } from "../../constants";
+
+const styles = StyleSheet.create({
+  qrcode: {
+    flex: 1,
+    alignItems: "center",
+  },
+});
 
 export function Lobby(props: ParamList[typeof GAME_SCREEN]) {
   const peer = usePeer(),
+    state = useMapStateToProps(selectState),
     peers = useMapStateToProps(selectPeers),
     teams = useMapStateToProps(selectTeams),
-    myPeer = peers.get(peer ? peer.getId() : "", Peer()),
-    [name, setName] = useState(myPeer.name),
+    windowDimensions = useWindowDimensions(),
+    peerState = peers.get(peer ? peer.getId() : "", Peer()),
+    [name, setName] = useState(peerState.name),
     [teamNames, setTeamNames] = useState(teams),
     navigation = useNavigation(),
     team1 = peers.filter((peer) => peer.team === 0).toList(),
     team2 = peers.filter((peer) => peer.team === 1).toList();
+
+  if (state === GameState.None) {
+    lobby();
+  } else if (state !== GameState.Lobby) {
+    navigation.navigate(GAME_SCREEN, { id: props.id });
+  }
 
   useMemo(() => setTeamNames(teams), [teams]);
 
@@ -36,23 +58,14 @@ export function Lobby(props: ParamList[typeof GAME_SCREEN]) {
         try {
           await peer.connect(appPeerId);
         } catch (_) {}
-
-        const onStart = (message: any) => {
-          if (message.type === "start") {
-            navigation.navigate(GAME_SCREEN, { id: props.id });
-            peer.off("message", onStart);
-          }
-        };
-        peer.on("message", onStart);
       }
-      gameSetPeerName(peer.getId(), getIdFromAppId(peer.getId()));
     }
   }, [peer, props.id]);
 
   const createOnSetTeamName = useCallback(
     (team: number) => (name: string) => {
       if (peer) {
-        gameSetTeamName(team, name);
+        setTeamName(team, name);
         setTeamNames((teamNames) => teamNames.set(team, name));
       }
     },
@@ -62,7 +75,7 @@ export function Lobby(props: ParamList[typeof GAME_SCREEN]) {
   const onSetName = useCallback(
     (name: string) => {
       if (peer) {
-        gameSetPeerName(peer.getId(), name);
+        setPeerName(peer.getId(), name);
         setName(name);
       }
     },
@@ -72,20 +85,11 @@ export function Lobby(props: ParamList[typeof GAME_SCREEN]) {
   const createOnSetTeam = useCallback(
     (team: number) => () => {
       if (peer) {
-        gameSetPeerTeam(peer.getId(), team);
+        setPeerTeam(peer.getId(), team);
       }
     },
     [peer]
   );
-
-  const onStart = useCallback(() => {
-    if (peer) {
-      peer.broadcast({
-        type: "start",
-      });
-      navigation.navigate(GAME_SCREEN, { id: props.id });
-    }
-  }, [peer, props.id]);
 
   return (
     <View>
@@ -101,23 +105,33 @@ export function Lobby(props: ParamList[typeof GAME_SCREEN]) {
         onChangeText={createOnSetTeamName(1)}
       />
       <Divider />
-      <CheckBox checked={myPeer.team == 0} onChange={createOnSetTeam(0)}>
-        {(myPeer.team == 1 ? "Join " : "") + teamNames.get(0, "")}
+      <CheckBox checked={peerState.team == 0} onChange={createOnSetTeam(0)}>
+        {(peerState.team == 1 ? "Join " : "") + teamNames.get(0, "")}
       </CheckBox>
       {team1
         .toSeq()
         .map((peer, id) => <Text key={id}>{peer.name}</Text>)
         .valueSeq()}
-      <CheckBox checked={myPeer.team == 1} onChange={createOnSetTeam(1)}>
-        {(myPeer.team == 0 ? "Join " : "") + teamNames.get(1, "")}
+      <CheckBox checked={peerState.team == 1} onChange={createOnSetTeam(1)}>
+        {(peerState.team == 0 ? "Join " : "") + teamNames.get(1, "")}
       </CheckBox>
       {team2
         .toSeq()
         .map((peer, id) => <Text key={id}>{peer.name}</Text>)
         .valueSeq()}
-      <Button disabled={team1.isEmpty() || team2.isEmpty()} onPress={onStart}>
+      <Button disabled={team1.isEmpty() || team2.isEmpty()} onPress={start}>
         Start
       </Button>
+      <View style={styles.qrcode}>
+        <QRCode
+          uri={makeUrl(`/lobby/${props.id}`)}
+          size={
+            isLargeScreen(windowDimensions.width)
+              ? SMALL_WIDTH
+              : windowDimensions.width
+          }
+        />
+      </View>
     </View>
   );
 }

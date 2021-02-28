@@ -1,6 +1,10 @@
 import { Map, RecordOf, List } from "immutable";
 import { IState } from "../lib/state";
-import { IPeer, Peer, STORE_NAME } from "./definitions";
+import { IPeer, Peer, GameState, STORE_NAME } from "./definitions";
+
+export function selectState(state: IState): GameState {
+  return state[STORE_NAME].state;
+}
 
 export function selectPeers(state: IState): Map<string, RecordOf<IPeer>> {
   return state[STORE_NAME].peers;

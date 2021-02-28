@@ -1,6 +1,6 @@
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import React, { ReactNode } from "react";
-import { LARGE_WIDTH } from "./screens";
+import { LARGE_WIDTH } from "./constants";
 import { Layout } from "@ui-kitten/components";
 
 const styles = StyleSheet.create({

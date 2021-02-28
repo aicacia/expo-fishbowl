@@ -1,5 +1,5 @@
 import { IJSONObject } from "@aicacia/json";
-import { createActionWithPayload } from "@aicacia/state";
+import { createActionWithPayload, IAction } from "@aicacia/state";
 import { Map, List, Record, RecordOf } from "immutable";
 
 export interface IPeer {
@@ -48,22 +48,39 @@ export function cardsFromJSON(json: IJSONObject) {
   );
 }
 
+export function teamsFromJSON(json: IJSONObject) {
+  return Object.keys(json).reduce(
+    (teams, team) => teams.set(+team, json[team] as string),
+    Map<number, string>()
+  );
+}
+
+export enum GameState {
+  None,
+  Lobby,
+  Started,
+  Finish,
+}
+
 export interface IGame {
+  state: GameState;
   peers: Map<string, RecordOf<IPeer>>;
-  teams: List<string>;
+  teams: Map<number, string>;
   cards: Map<string, List<RecordOf<ICard>>>;
 }
 
 export const Game = Record<IGame>({
+  state: GameState.None,
   peers: Map(),
-  teams: List(["Team 1", "Team 2"]),
+  teams: teamsFromJSON({ 0: "Team 1", 1: "Team 2" }),
   cards: Map(),
 });
 
 export function fromJSON(json: IJSONObject): RecordOf<IGame> {
   return Game({
+    state: json.state as GameState,
     peers: peersFromJSON(json.peers as IJSONObject),
-    teams: List(json.teams as Array<string>),
+    teams: teamsFromJSON(json.teams as IJSONObject),
     cards: cardsFromJSON(json.cards as IJSONObject),
   });
 }
@@ -71,23 +88,60 @@ export function fromJSON(json: IJSONObject): RecordOf<IGame> {
 export const STORE_NAME = "game";
 export const INITIAL_STATE = Game();
 
-export const gameSyncAction = createActionWithPayload<{
-  peers: {
-    [key: string]: IPeer;
-  };
-  cards: {
-    [key: string]: Array<ICard>;
-  };
-}>(`${STORE_NAME}.sync`);
-export const gameSetNameAction = createActionWithPayload<{
+export const syncAction = createActionWithPayload<IJSONObject>(
+  `${STORE_NAME}.sync`
+);
+
+export const setStateAction = createActionWithPayload<GameState>(
+  `${STORE_NAME}.set-state`
+);
+
+export const setNameAction = createActionWithPayload<{
   id: string;
   name: string;
 }>(`${STORE_NAME}.set-name`);
-export const gameSetTeamAction = createActionWithPayload<{
+
+export const setTeamAction = createActionWithPayload<{
   id: string;
   team: number;
 }>(`${STORE_NAME}.set-team`);
-export const gameSetTeamNameAction = createActionWithPayload<{
+
+export const setTeamNameAction = createActionWithPayload<{
   team: number;
   name: string;
 }>(`${STORE_NAME}.set-team-name`);
+
+function updatePeer(
+  state: RecordOf<IGame>,
+  id: string,
+  updater: (peer: RecordOf<IPeer>) => RecordOf<IPeer>
+) {
+  return state.update("peers", (peers) =>
+    peers.set(id, updater(peers.get(id) || Peer()))
+  );
+}
+
+export function reducer(
+  state: RecordOf<IGame>,
+  action: IAction
+): RecordOf<IGame> {
+  if (setNameAction.is(action)) {
+    return updatePeer(state, action.payload.id, (peer) =>
+      peer.set("name", action.payload.name)
+    );
+  } else if (setTeamAction.is(action)) {
+    return updatePeer(state, action.payload.id, (peer) =>
+      peer.set("team", action.payload.team)
+    );
+  } else if (setTeamNameAction.is(action)) {
+    return state.update("teams", (teams) =>
+      teams.set(action.payload.team, action.payload.name)
+    );
+  } else if (syncAction.is(action)) {
+    return state.mergeDeep(fromJSON(action.payload));
+  } else if (setStateAction.is(action)) {
+    return state.set("state", action.payload);
+  } else {
+    return state;
+  }
+}

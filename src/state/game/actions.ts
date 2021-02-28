@@ -1,108 +1,54 @@
 import {
-  gameSetNameAction,
-  gameSetTeamAction,
-  gameSetTeamNameAction,
-  gameSyncAction,
-  IGame,
-  IPeer,
-  Peer,
-  peersFromJSON,
-  STORE_NAME,
+  setNameAction,
+  setTeamAction,
+  setTeamNameAction,
+  setStateAction,
+  syncAction,
+  GameState,
 } from "./definitions";
-import { state } from "../lib/state";
+import { dispatch, state } from "../lib/state";
 import { getPeer } from "../../peer";
 import { debounce } from "@aicacia/debounce";
-import { Map, RecordOf } from "immutable";
-import { IAction } from "@aicacia/state";
+import { getIdFromAppId } from "../../id";
 
-export const store = state.getStore(STORE_NAME);
-
-function updatePeer(
-  state: RecordOf<IGame>,
-  id: string,
-  updater: (peer: RecordOf<IPeer>) => RecordOf<IPeer>
-) {
-  return state.update("peers", (peers) => {
-    const peer = peers.get(id, Peer());
-    return peers.set(id, updater(peer));
-  });
+export function lobby() {
+  const action = setStateAction.create(GameState.Lobby);
+  dispatch(action);
+  getPeer().then((peer) => peer.broadcast(action));
 }
 
-function setStatePeerName(state: RecordOf<IGame>, id: string, name: string) {
-  return updatePeer(state, id, (peer) => peer.set("name", name));
+export function start() {
+  const action = setStateAction.create(GameState.Started);
+  dispatch(action);
+  getPeer().then((peer) => peer.broadcast(action));
 }
 
-export function setPeerName(id: string, name: string) {
-  store.update((state) => setStatePeerName(state, id, name));
-}
+export const setTeamName = debounce((team: number, name: string) => {
+  const action = setTeamNameAction.create({ team, name });
+  dispatch(action);
+  getPeer().then((peer) => peer.broadcast(action));
+}, 500);
 
-function setStatePeerTeam(state: RecordOf<IGame>, id: string, team: number) {
-  return updatePeer(state, id, (peer) => peer.set("team", team));
-}
+export const setPeerName = debounce((id: string, name: string) => {
+  const action = setNameAction.create({ id, name });
+  dispatch(action);
+  getPeer().then((peer) => peer.broadcast(action));
+}, 500);
 
 export function setPeerTeam(id: string, team: number) {
-  store.update((state) => setStatePeerTeam(state, id, team));
-}
-
-function setStateTeamName(state: RecordOf<IGame>, team: number, name: string) {
-  return state.update("teams", (teams) => teams.set(team, name));
-}
-
-export function setTeamName(team: number, name: string) {
-  store.update((state) => setStateTeamName(state, team, name));
-}
-
-function setStatePeers(
-  state: RecordOf<IGame>,
-  peers: Map<string, RecordOf<IPeer>>
-) {
-  return state.update("peers", (state) => state.merge(peers));
-}
-
-export function setPeers(peers: Map<string, RecordOf<IPeer>>) {
-  store.update((state) => setStatePeers(state, peers));
-}
-
-export const gameSetTeamName = debounce((team: number, name: string) => {
-  setTeamName(team, name);
-  getPeer().then((peer) =>
-    peer.broadcast(gameSetTeamNameAction.create({ team, name }))
-  );
-}, 500);
-
-export const gameSetPeerName = debounce((id: string, name: string) => {
-  setPeerName(id, name);
-  getPeer().then((peer) =>
-    peer.broadcast(gameSetNameAction.create({ id, name }))
-  );
-}, 500);
-
-export function gameSetPeerTeam(id: string, team: number) {
-  setPeerTeam(id, team);
-  getPeer().then((peer) =>
-    peer.broadcast(gameSetTeamAction.create({ id, team }))
-  );
-}
-
-export function reducer(
-  state: RecordOf<IGame>,
-  action: IAction
-): RecordOf<IGame> {
-  if (gameSetNameAction.is(action)) {
-    return setStatePeerName(state, action.payload.id, action.payload.name);
-  } else if (gameSetTeamAction.is(action)) {
-    return setStatePeerTeam(state, action.payload.id, action.payload.team);
-  } else if (gameSetTeamNameAction.is(action)) {
-    return setStateTeamName(state, action.payload.team, action.payload.name);
-  } else if (gameSyncAction.is(action)) {
-    return setStatePeers(state, peersFromJSON(action.payload.peers as any));
-  } else {
-    return state;
-  }
+  const action = setTeamAction.create({ id, team });
+  dispatch(action);
+  getPeer().then((peer) => peer.broadcast(action));
 }
 
 getPeer().then((peer) => {
+  setPeerName(peer.getId(), getIdFromAppId(peer.getId()));
+
   peer.on("connection", (id) => {
-    peer.send(id, gameSyncAction.create(store.getCurrent().toJS()));
+    const gameState = state.getCurrent().game;
+
+    if (gameState.state !== GameState.None) {
+      peer.send(id, syncAction.create(gameState.toJS() as any));
+    }
   });
 });
