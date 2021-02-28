@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "expocastcanvassender.app"
-               BlueprintName = "expocastcanvassender"
-               ReferencedContainer = "container:expocastcanvassender.xcodeproj">
+               BuildableName = "fishbowl.app"
+               BlueprintName = "fishbowl"
+               ReferencedContainer = "container:fishbowl.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "expocastcanvassenderTests.xctest"
-               BlueprintName = "expocastcanvassenderTests"
-               ReferencedContainer = "container:expocastcanvassender.xcodeproj">
+               BuildableName = "fishbowlTests.xctest"
+               BlueprintName = "fishbowlTests"
+               ReferencedContainer = "container:fishbowl.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "expocastcanvassender.app"
-            BlueprintName = "expocastcanvassender"
-            ReferencedContainer = "container:expocastcanvassender.xcodeproj">
+            BuildableName = "fishbowl.app"
+            BlueprintName = "fishbowl"
+            ReferencedContainer = "container:fishbowl.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "expocastcanvassender.app"
-            BlueprintName = "expocastcanvassender"
-            ReferencedContainer = "container:expocastcanvassender.xcodeproj">
+            BuildableName = "fishbowl.app"
+            BlueprintName = "fishbowl"
+            ReferencedContainer = "container:fishbowl.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

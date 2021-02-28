@@ -2,9 +2,9 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '10.0'
+platform :ios, '11.0'
 
-target 'expocastcanvassender' do
+target 'fishbowl' do
   use_unimodules!
   config = use_native_modules!
 
@@ -22,3 +22,6 @@ target 'expocastcanvassender' do
   #    flipper_post_install(installer)
   # end
 end
+
+pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
+pod 'google-cast-sdk-no-bluetooth'

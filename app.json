@@ -1,12 +1,34 @@
 {
-  "name": "expo-cast-canvas-sender",
-  "displayName": "expo-cast-canvas-sender",
+  "name": "fishbowl",
+  "displayName": "fishbowl",
   "expo": {
-    "name": "expo-cast-canvas-sender",
-    "slug": "expo-cast-canvas-sender",
+    "name": "fishbowl",
+    "slug": "fishbowl",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
-  }
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.aicacia.quantu",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  },
+  "receiverApplicationId": "41A895CA"
 }
