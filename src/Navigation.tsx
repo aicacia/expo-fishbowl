@@ -7,7 +7,6 @@ import { LobbyScreen } from "./screens/Lobby/LobbyScreen";
 import { Loading } from "./Loading";
 import {
   DEFAULT_SCREEN,
-  ENABLE_LINKING,
   GAME_SCREEN,
   HOME_SCREEN,
   linking,
@@ -19,10 +18,7 @@ export const { Navigator, Screen } = createStackNavigator<ParamList>();
 
 export function Navigation() {
   return (
-    <NavigationContainer
-      linking={ENABLE_LINKING ? linking : undefined}
-      fallback={<Loading />}
-    >
+    <NavigationContainer linking={linking} fallback={<Loading />}>
       <NavigationStack />
     </NavigationContainer>
   );

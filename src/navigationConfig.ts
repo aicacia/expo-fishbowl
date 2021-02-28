@@ -1,12 +1,10 @@
-import { Platform } from "react-native";
-
 export const HOME_SCREEN = "Home",
   LOBBY_SCREEN = "Lobby",
   GAME_SCREEN = "Game",
   DEFAULT_SCREEN = HOME_SCREEN;
 
 export type ParamList = {
-  [HOME_SCREEN]: unknown;
+  [HOME_SCREEN]: Record<string, unknown>;
   [LOBBY_SCREEN]: {
     id: string;
   };
@@ -14,10 +12,6 @@ export type ParamList = {
     id: string;
   };
 };
-
-export const ENABLE_LINKING =
-  global.location?.hostname === "localhost" ||
-  (!("electron" in (global.process?.versions || {})) && Platform.OS !== "web");
 
 export const linking = {
   prefixes: [
@@ -33,9 +27,3 @@ export const linking = {
     },
   },
 };
-
-if (ENABLE_LINKING && process.env.NODE_ENV !== "production") {
-  linking.prefixes.push(
-    `${global.location?.protocol}//${global.location?.host}:${global.location?.port}`
-  );
-}
