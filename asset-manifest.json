@@ -1,0 +1,33 @@
+{
+  "files": {
+    "static/js/0.1185501f.chunk.js": "/expo-fishbowl/static/js/0.1185501f.chunk.js",
+    "static/js/0.1185501f.chunk.js.map": "/expo-fishbowl/static/js/0.1185501f.chunk.js.map",
+    "static/js/1.9c2148ec.chunk.js": "/expo-fishbowl/static/js/1.9c2148ec.chunk.js",
+    "static/js/1.9c2148ec.chunk.js.map": "/expo-fishbowl/static/js/1.9c2148ec.chunk.js.map",
+    "app.js": "/expo-fishbowl/static/js/app.a531ca34.chunk.js",
+    "app.js.map": "/expo-fishbowl/static/js/app.a531ca34.chunk.js.map",
+    "runtime~app.js": "/expo-fishbowl/static/js/runtime~app.2ed0e524.js",
+    "runtime~app.js.map": "/expo-fishbowl/static/js/runtime~app.2ed0e524.js.map",
+    "static/js/4.35ee9384.chunk.js": "/expo-fishbowl/static/js/4.35ee9384.chunk.js",
+    "static/js/4.35ee9384.chunk.js.map": "/expo-fishbowl/static/js/4.35ee9384.chunk.js.map",
+    "static/js/5.8af8c9aa.chunk.js": "/expo-fishbowl/static/js/5.8af8c9aa.chunk.js",
+    "static/js/5.8af8c9aa.chunk.js.map": "/expo-fishbowl/static/js/5.8af8c9aa.chunk.js.map",
+    "static/js/6.4a71d437.chunk.js": "/expo-fishbowl/static/js/6.4a71d437.chunk.js",
+    "static/js/6.4a71d437.chunk.js.map": "/expo-fishbowl/static/js/6.4a71d437.chunk.js.map",
+    "static/js/7.a80914e2.chunk.js": "/expo-fishbowl/static/js/7.a80914e2.chunk.js",
+    "static/js/7.a80914e2.chunk.js.map": "/expo-fishbowl/static/js/7.a80914e2.chunk.js.map",
+    "404.html": "/expo-fishbowl/404.html",
+    "favicon-16.png": "/expo-fishbowl/favicon-16.png",
+    "favicon-32.png": "/expo-fishbowl/favicon-32.png",
+    "favicon.ico": "/expo-fishbowl/favicon.ico",
+    "index.html": "/expo-fishbowl/index.html",
+    "manifest.json": "/expo-fishbowl/manifest.json",
+    "serve.json": "/expo-fishbowl/serve.json",
+    "static/js/4.35ee9384.chunk.js.LICENSE.txt": "/expo-fishbowl/static/js/4.35ee9384.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime~app.2ed0e524.js",
+    "static/js/4.35ee9384.chunk.js",
+    "static/js/app.a531ca34.chunk.js"
+  ]
+}
