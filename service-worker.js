@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/expo-fishbowl/precache-manifest.e924cf781ac23d68617b390648c7d731.js"
+  "/precache-manifest.87d6fefc0a271e8092f3c88bae5c2e8d.js"
 );
 
 workbox.skipWaiting();
@@ -29,7 +29,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/expo-fishbowl/index.html", {
+workbox.routing.registerNavigationRoute("index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });
