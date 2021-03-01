@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Input, Button } from "@ui-kitten/components";
-import { HOME_SCREEN, LOBBY_SCREEN, ParamList } from "../../navigationConfig";
+import { GAME_SCREEN, HOME_SCREEN, ParamList } from "../../navigationConfig";
 import { usePeer } from "../../peer";
 import { useNavigation } from "@react-navigation/native";
 import { getIdFromAppId } from "../../id";
@@ -22,7 +22,7 @@ export function Home(_props: ParamList[typeof HOME_SCREEN]) {
       <Input value={gameId} onChangeText={setGameId} />
       <Button
         disabled={!gameId.length}
-        onPress={() => navigation.navigate(LOBBY_SCREEN, { id: gameId })}
+        onPress={() => navigation.navigate(GAME_SCREEN, { id: gameId })}
       >
         Join Game
       </Button>
@@ -30,7 +30,7 @@ export function Home(_props: ParamList[typeof HOME_SCREEN]) {
         <Button
           style={styles.startNewGame}
           onPress={() =>
-            navigation.navigate(LOBBY_SCREEN, {
+            navigation.navigate(GAME_SCREEN, {
               id: getIdFromAppId(peer.getId()),
             })
           }

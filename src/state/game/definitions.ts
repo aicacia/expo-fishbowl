@@ -1,15 +1,17 @@
 import { IJSONObject } from "@aicacia/json";
 import { createActionWithPayload, IAction } from "@aicacia/state";
-import { Map, List, Record, RecordOf } from "immutable";
+import { Map, Record, RecordOf } from "immutable";
 
 export interface IPeer {
   name: string;
   team: number;
+  doneWithCards: boolean;
 }
 
 export const Peer = Record<IPeer>({
   name: "",
   team: 0,
+  doneWithCards: false,
 });
 
 export function peerFromJSON(json: IJSONObject): RecordOf<IPeer> {
@@ -41,11 +43,17 @@ export function cardFromJSON(json: IJSONObject): RecordOf<ICard> {
 }
 
 export function cardsFromJSON(json: IJSONObject) {
-  return Object.keys(json).reduce(
-    (cards, id) =>
-      cards.set(id, List((json[id] as Array<IJSONObject>).map(cardFromJSON))),
-    Map<string, List<RecordOf<ICard>>>()
-  );
+  return Object.keys(json).reduce((peersCards, id) => {
+    const peerCardsJSON = json[id] as IJSONObject;
+    return peersCards.set(
+      id,
+      Object.keys(peerCardsJSON).reduce(
+        (cards, idx) =>
+          cards.set(+idx, cardFromJSON(peerCardsJSON[idx] as IJSONObject)),
+        Map<number, RecordOf<ICard>>()
+      )
+    );
+  }, Map<string, Map<number, RecordOf<ICard>>>());
 }
 
 export function teamsFromJSON(json: IJSONObject) {
@@ -56,21 +64,21 @@ export function teamsFromJSON(json: IJSONObject) {
 }
 
 export enum GameState {
-  None,
   Lobby,
-  Started,
-  Finish,
+  Cards,
+  Playing,
+  Done,
 }
 
 export interface IGame {
   state: GameState;
   peers: Map<string, RecordOf<IPeer>>;
   teams: Map<number, string>;
-  cards: Map<string, List<RecordOf<ICard>>>;
+  cards: Map<string, Map<number, RecordOf<ICard>>>;
 }
 
 export const Game = Record<IGame>({
-  state: GameState.None,
+  state: GameState.Cards,
   peers: Map(),
   teams: teamsFromJSON({ 0: "Team 1", 1: "Team 2" }),
   cards: Map(),
@@ -88,9 +96,10 @@ export function fromJSON(json: IJSONObject): RecordOf<IGame> {
 export const STORE_NAME = "game";
 export const INITIAL_STATE = Game();
 
-export const syncAction = createActionWithPayload<IJSONObject>(
-  `${STORE_NAME}.sync`
-);
+export const syncAction = createActionWithPayload<{
+  from: string;
+  state: IJSONObject;
+}>(`${STORE_NAME}.sync`);
 
 export const setStateAction = createActionWithPayload<GameState>(
   `${STORE_NAME}.set-state`
@@ -111,6 +120,17 @@ export const setTeamNameAction = createActionWithPayload<{
   name: string;
 }>(`${STORE_NAME}.set-team-name`);
 
+export const setCardTextAction = createActionWithPayload<{
+  peerId: string;
+  index: number;
+  text: string;
+}>(`${STORE_NAME}.set-card-text`);
+
+export const setDoneWithCardsAction = createActionWithPayload<{
+  peerId: string;
+  doneWithCards: boolean;
+}>(`${STORE_NAME}.set-done-with-cards`);
+
 function updatePeer(
   state: RecordOf<IGame>,
   id: string,
@@ -119,6 +139,20 @@ function updatePeer(
   return state.update("peers", (peers) =>
     peers.set(id, updater(peers.get(id) || Peer()))
   );
+}
+
+function updateCard(
+  state: RecordOf<IGame>,
+  peerId: string,
+  index: number,
+  updater: (peer: RecordOf<ICard>) => RecordOf<ICard>
+) {
+  return state.update("cards", (cards) => {
+    const peerCards = cards.get(peerId, Map<number, RecordOf<ICard>>()),
+      peerCard = peerCards.get(index, Card());
+
+    return cards.set(peerId, peerCards.set(index, updater(peerCard)));
+  });
 }
 
 export function reducer(
@@ -138,9 +172,26 @@ export function reducer(
       teams.set(action.payload.team, action.payload.name)
     );
   } else if (syncAction.is(action)) {
-    return state.mergeDeep(fromJSON(action.payload));
+    const syncState = fromJSON(action.payload.state);
+
+    if (syncState.peers.size > state.peers.size) {
+      return state.mergeDeep(syncState);
+    } else {
+      return syncState.mergeDeep(state);
+    }
   } else if (setStateAction.is(action)) {
     return state.set("state", action.payload);
+  } else if (setCardTextAction.is(action)) {
+    return updateCard(
+      state,
+      action.payload.peerId,
+      action.payload.index,
+      (card) => card.set("text", action.payload.text)
+    );
+  } else if (setDoneWithCardsAction.is(action)) {
+    return updatePeer(state, action.payload.peerId, (peer) =>
+      peer.set("doneWithCards", action.payload.doneWithCards)
+    );
   } else {
     return state;
   }
