@@ -1,22 +1,20 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { Button, CheckBox, Divider, Input, Text } from "@ui-kitten/components";
 import { usePeer } from "../../peer";
-import { useMapStateToProps } from "../../state";
+import { useReduxStore } from "../../state";
+import { Peer, GameState } from "../../state/game/definitions";
 import {
   setPeerName,
   setPeerTeam,
   setTeamName,
   setGameState,
-  Peer,
-  selectPeers,
-  selectTeams,
-  GameState,
-} from "../../state/game";
+} from "../../state/game/functions";
+import { selectPeers, selectTeams } from "../../state/game/selectors";
 
 export const Lobby = memo(() => {
   const peer = usePeer(),
-    peers = useMapStateToProps(selectPeers),
-    teams = useMapStateToProps(selectTeams),
+    peers = useReduxStore(selectPeers),
+    teams = useReduxStore(selectTeams),
     peerState = peers.get(peer ? peer.getId() : "", Peer()),
     [name, setName] = useState(peerState.name),
     [teamNames, setTeamNames] = useState(teams),

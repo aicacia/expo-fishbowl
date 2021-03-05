@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { EventEmitter } from "events";
 import PeerJS from "peerjs";
 import { getId, getAppId } from "./id";
+import { Action } from "redux";
 
 export const APP_PEER_ID: Option<string> = none(),
-  PEER: Option<Peer> = none();
+  PEER: Option<Peer<Action>> = none();
 
 const emitter = new EventEmitter();
 
@@ -17,7 +18,7 @@ export function getPeerId() {
 }
 
 export function getPeer() {
-  return new Promise<Peer>((resolve) =>
+  return new Promise<Peer<Action>>((resolve) =>
     PEER.ifSome(resolve).ifNone(() => emitter.once("peer", resolve))
   );
 }
@@ -48,7 +49,7 @@ export function usePeerId() {
 
 async function init() {
   const appPeerId = getAppId(await getId()),
-    peer = await Peer.create(new PeerJS(appPeerId));
+    peer = await Peer.create<Action>(new PeerJS(appPeerId));
 
   peer.on("error", (error) => {
     console.error(error);
